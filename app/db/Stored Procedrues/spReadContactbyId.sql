@@ -4,19 +4,18 @@ DROP PROCEDURE IF EXISTS spReadLeverancierById;
 
 DELIMITER //
 
-CREATE PROCEDURE spReadLeverancierById(
+CREATE PROCEDURE spReadContactById(
     GivenLevId      INT UNSIGNED
 )
 BEGIN
     SELECT
        Id,
-       ContactId,
-       Naam AS LeverancierNaam,
-       ContactPersoon,
-       LeverancierNummer,
-       Mobiel
+       Straat,
+       Huisnummer,
+       Postcode,
+       Stad
     
-    FROM Leverancier
+    FROM Contact
     WHERE Id = GivenLevId;
 END //
 

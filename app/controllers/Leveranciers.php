@@ -8,8 +8,11 @@ class Leveranciers extends BaseController
     {
         $this->leverancierModel = $this->model('Leverancier');
     }
-    public function index($error = null)
+    public function index($page = 1, $error = null)
     {
+        $itemsPerPage = 4; // Number of items per page
+        $offset = ($page - 1) * $itemsPerPage;
+
         if (!is_null($error)) {
             $color = 'alert-danger';
             $visibility = 'flex';
@@ -22,10 +25,13 @@ class Leveranciers extends BaseController
             'Magazijn'              => null,
             'message'               => $error,
             'messageColor'          => $color,
-            'messageVisibility'     => $visibility
+            'messageVisibility'     => $visibility,
+            'currentPage'           => $page,
+            'itemsPerPage'          => $itemsPerPage
         ];
 
-        $data['Leveranciers'] = $this->leverancierModel->LeverancierOverzicht();
+        $data['Leveranciers'] = $this->leverancierModel->LeverancierOverzicht($offset, $itemsPerPage);
+        $data['totalItems'] = $this->leverancierModel->getTotalLeveranciers();
 
         $this->view('leveranciers/index', $data);
     }
@@ -64,16 +70,16 @@ class Leveranciers extends BaseController
 
     public function AddLevering(int $productId = null)
     {
-        if(is_null($productId)){
+        if (is_null($productId)) {
             $DBdata = $this->leverancierModel->ReadProductLeverancierByProId($_POST['productId']);
-        }else{
+        } else {
             $DBdata = $this->leverancierModel->ReadProductLeverancierByProId($productId);
         }
         if (empty($DBdata)) {
             $this->index('Product niet gevonden');
-        } else if($DBdata[0]->isActief == 0){
+        } else if ($DBdata[0]->isActief == 0) {
             $this->index('Dit product wordt niet meer geleverd');
-        }else {
+        } else {
 
             $data = [
                 'PPLId'                 => $DBdata[0]->PPLId,
@@ -91,9 +97,9 @@ class Leveranciers extends BaseController
                 'messageVisibility'     => '',
                 'productId'             => null
             ];
-            if(is_null($productId)){
+            if (is_null($productId)) {
                 $data['productId'] = $_POST['productId'];
-            }else{
+            } else {
                 $data['productId'] = $productId;
             }
 
@@ -115,7 +121,7 @@ class Leveranciers extends BaseController
                         'DatumLev'      => $data['datumLev'],
                         'AantalLev'     => $data['aantalLev']
                     ];
-                    
+
                     $this->leverancierModel->UpdateLeverancierPerProduct($ModelData);
                     header('Location:' . URLROOT . '/leveranciers/index');
                 } else {
@@ -138,6 +144,144 @@ class Leveranciers extends BaseController
             $data['datumLevError'] = 'Vul de datum in';
         } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $data['datumLev'])) {
             $data['datumLevError'] = 'Vul een geldige datum in';
+        }
+        return $data;
+    }
+
+    public function edit($page = 1, $error = null)
+    {
+        $itemsPerPage = 4; // Number of items per page
+        $offset = ($page - 1) * $itemsPerPage;
+
+        if (!is_null($error)) {
+            $color = 'alert-danger';
+            $visibility = 'flex';
+        } else {
+            $color = '';
+            $visibility = '';
+        }
+
+        $data = [
+            'Magazijn'              => null,
+            'message'               => $error,
+            'messageColor'          => $color,
+            'messageVisibility'     => $visibility,
+            'currentPage'           => $page,
+            'itemsPerPage'          => $itemsPerPage
+        ];
+
+        $data['Leveranciers'] = $this->leverancierModel->LeverancierOverzicht($offset, $itemsPerPage);
+        $data['totalItems'] = $this->leverancierModel->getTotalLeveranciers();
+
+        $this->view('leveranciers/edit', $data);
+    }
+
+    public function updateLeverancier(int $leverancierId)
+    {
+        $leverancier = $this->leverancierModel->ReadLeverancierById($leverancierId);
+        echo $leverancierId;
+        var_dump($leverancier);
+
+        if (empty($leverancier)) {
+            $this->edit(1, 'Leverancier niet gevonden');
+        } else {
+
+            $data = [
+                'LeverancierId'         => $leverancier->Id,
+                'LeverancierNaam'       => $leverancier->LeverancierNaam,
+                'ContactPersoon'        => $leverancier->ContactPersoon,
+                'LeverancierNummer'     => $leverancier->LeverancierNummer,
+                'Mobiel'                => $leverancier->Mobiel,
+                'ContactId'             => $leverancier->ContactId,
+                'Straat'                => '',
+                'Huisnummer'            => '',
+                'Postcode'              => '',
+                'Stad'                  => '',
+                'NaamError'  => '',
+                'ContactPersoonError'   => '',
+                'LeverancierNummerError' => '',
+                'MobielError'           => '',
+                'StraatError'           => '',
+                'HuisnummerError'       => '',
+                'PostcodeError'         => '',
+                'StadError'             => '',
+                'message'               => '',
+                'messageColor'          => '',
+                'messageVisibility'     => ''
+            ];
+
+            $contact = $this->leverancierModel->ReadContactById($leverancier->ContactId);
+            if (!empty($contact)) {
+                $data['Straat'] = $contact->Straat;
+                $data['Huisnummer'] = $contact->Huisnummer;
+                $data['Postcode'] = $contact->Postcode;
+                $data['Stad'] = $contact->Stad;
+            }
+            var_dump($data);
+
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+                $data['LeverancierNaam'] = trim($_POST['LeverancierNaam']);
+                $data['ContactPersoon'] = trim($_POST['ContactPersoon']);
+                $data['LeverancierNummer'] = trim($_POST['LeverancierNummer']);
+                $data['Mobiel'] = trim($_POST['Mobiel']);
+
+                $data = $this->updateLeverancierValidation($data);
+
+                if (
+                    empty($data['LeverancierNaamError']) &&
+                    empty($data['ContactPersoonError']) &&
+                    empty($data['LeverancierNummerError']) &&
+                    empty($data['MobielError']) &&
+                    empty($data['StraatError']) &&
+                    empty($data['HuisnummerError']) &&
+                    empty($data['PostcodeError']) &&
+                    empty($data['StadError'])
+                ) {
+                    $ModelData = [
+                        'LeverancierId'     => $data['LeverancierId'],
+                        'LeverancierNaam'   => $data['LeverancierNaam'],
+                        'ContactPersoon'    => $data['ContactPersoon'],
+                        'LeverancierNummer' => $data['LeverancierNummer'],
+                        'Mobiel'            => $data['Mobiel']
+                    ];
+                    $this->leverancierModel->UpdateLeverancier($ModelData);
+                    header('Location:' . URLROOT . '/leveranciers/edit');
+                } else {
+                    $this->view('leveranciers/update', $data);
+                }
+            } else {
+                $this->view('leveranciers/update', $data);
+            }
+        }
+    }
+
+    public function updateLeverancierValidation($data)
+    {
+        if (empty($data['LeverancierNaam'])) {
+            $data['LeverancierNaamError'] = 'Vul de naam in';
+        }
+        if (empty($data['ContactPersoon'])) {
+            $data['ContactPersoonError'] = 'Vul de contact persoon in';
+        }
+        if (empty($data['LeverancierNummer'])) {
+            $data['LeverancierNummerError'] = 'Vul het leverancier nummer in';
+        }
+        if (empty($data['Mobiel'])) {
+            $data['MobielError'] = 'Vul het mobiel nummer in';
+        }
+        if (empty($data['Straat'])) {
+            $data['StraatError'] = 'Vul de straat in';
+        }
+        if (empty($data['Huisnummer'])) {
+            $data['HuisnummerError'] = 'Vul het huisnummer in';
+        }
+        if (empty($data['Postcode'])) {
+            $data['PostcodeError'] = 'Vul de postcode in';
+        }
+        if (empty($data['Stad'])) {
+            $data['StadError'] = 'Vul de stad in';
         }
         return $data;
     }

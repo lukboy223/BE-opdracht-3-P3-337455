@@ -7,6 +7,7 @@ TRUNCATE TABLE Allergeen;
 TRUNCATE TABLE Leverancier;
 TRUNCATE TABLE ProductPerLeverancier;
 TRUNCATE TABLE ProductPerAllergeen;
+TRUNCATE TABLE Contact;
 
 INSERT INTO Product (Naam, Barcode) VALUES
 ('Mintnopjes',      '8719587231278'), 
@@ -51,13 +52,13 @@ INSERT INTO Allergeen (Naam, Omschrijving) VALUES
   
 
 
-INSERT INTO Leverancier (Naam, ContactPersoon, LeverancierNummer, Mobiel) VALUES
-('Venco',           'Bert van Linge',       'L1029384719', '06-28493827'),
-('Astra Sweets',    'Jasper del Monte',     'L1029284315', '06-39398734 '),
-('Haribo',          'Sven Stalman',         'L1029324748', '06-24383291'),
-('Basset',          'Joyce Stelterberg',    'L1023845773', '06-48293823'), 
-('De Bron',         'Remco Veenstra',       'L1023857736', '06-34291234'),
-('Quality Street',  'Jogan Nooij',          'L1029234586', '06-23458456');
+INSERT INTO Leverancier (Naam, ContactPersoon, LeverancierNummer, Mobiel, ContactId) VALUES
+('Venco',           'Bert van Linge',       'L1029384719', '06-28493827', 1),
+('Astra Sweets',    'Jasper del Monte',     'L1029284315', '06-39398734', 2),
+('Haribo',          'Sven Stalman',         'L1029324748', '06-24383291', 3),
+('Basset',          'Joyce Stelterberg',    'L1023845773', '06-48293823', 4), 
+('De Bron',         'Remco Veenstra',       'L1023857736', '06-34291234', 5),
+('Quality Street',  'Jogan Nooij',          'L1029234586', '06-23458456', 6);
 
 INSERT INTO ProductPerLeverancier (LeverancierId, ProductId, DatumLevering, Aantal, DatumEerstVolgendeLevering, isActief) VALUES
 (1, 1, '2024-11-09', 23, '2024-11-16',1), 
@@ -93,3 +94,11 @@ INSERT INTO ProductPerAllergeen (ProductId, AllergeenId) VALUES
 (13, 1), 
 (13, 4), 
 (13, 5);
+
+insert into Contact (Straat, Huisnummer, Postcode, Stad) values
+("Van Gilslaan", 34, "1045CB", "Hilvarenbeek"),
+("Den Dolderpad", 2, "1067RC", "Utrecht"),
+("Fredo Raalteweg", 257, "1236OP", "Nijmegen"),
+("Bertrand Russellhof", 21, "2034AP", "Den Haag"),
+("Leon van Bonstraat", 213, "145XC", "Lunteren"),
+("Bea van Lingenlaan", 234, "2197FG", "Sint Pancras");

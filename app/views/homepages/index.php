@@ -7,8 +7,9 @@
         <div class="col-6">
             <h3><?php echo $data['title']; ?></h3>
 
-            <a href="<?= URLROOT; ?>/Magazijns/index">Storage overview</a> <br>
-            <a href="<?= URLROOT ?>/Leveranciers/index">Leverancier overview</a>
+            <a href="<?= URLROOT; ?>/Magazijns/index">Magazijn overview</a> <br>
+            <a href="<?= URLROOT ?>/Leveranciers/index">Leverancier overview</a> <br>
+            <a href="<?= URLROOT ?>/Leveranciers/edit">Leverancier wijzigen</a> <br>
 
         </div>
         <div class="col-3"></div>

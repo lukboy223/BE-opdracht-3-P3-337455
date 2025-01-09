@@ -3,7 +3,7 @@
  * De database verbindingsgegevens
  */
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'Magazijnjamil');
+define('DB_NAME', 'magazijnjamil');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 

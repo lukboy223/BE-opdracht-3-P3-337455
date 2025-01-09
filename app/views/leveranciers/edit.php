@@ -29,8 +29,7 @@
                         <th>Contact persoon</th>
                         <th>Leverancier nummer</th>
                         <th>Mobiel</th>
-                        <th>Aantal verschillende producten</th>
-                        <th>Toon producten</th>
+                        <th>wijzigen</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -50,8 +49,7 @@
                             <td>{$Leverancier->ContactPersoon}</td>
                             <td>{$Leverancier->LeverancierNummer}</td>
                             <td>{$Leverancier->Mobiel}</td>
-                            <td>{$Leverancier->VerProducten}</td>
-                            <td><a href='" . URLROOT . "/Leveranciers/viewProducts/{$Leverancier->LeverancierId}'> <i class='bi bi-box'></i></td>
+                            <td><a href='" . URLROOT . "/Leveranciers/updateLeverancier/{$Leverancier->LeverancierId}'> <i class='bi bi-pencil'></i></td>
                            
                             </tr>";
                         }
@@ -66,7 +64,7 @@
                     $totalPages = ceil($data['totalItems'] / $data['itemsPerPage']);
                     for ($i = 1; $i <= $totalPages; $i++) {
                         $active = $i == $data['currentPage'] ? 'active' : '';
-                        echo "<li class='page-item $active'><a class='page-link' href='" . URLROOT . "/Leveranciers/index/$i'>$i</a></li>";
+                        echo "<li class='page-item $active'><a class='page-link' href='" . URLROOT . "/Leveranciers/edit/$i'>$i</a></li>";
                     }
                     ?>
                 </ul>

@@ -69,9 +69,24 @@ Id                          int             unsigned    not null    auto_increme
 create table Leverancier (
 Id                          int             unsigned    not null    auto_increment
 ,Naam                       varchar(50)                 not null
+,ConatactId                 int             unsigned    not null
 ,ContactPersoon             varchar(120)                not null
 ,LeverancierNummer          varchar(50)                 not null    unique
 ,Mobiel                     varchar(15)                 not null
+,isActief                   bit                         not null    default 1
+,Opmerking                  varchar(250)                null        default null
+,DatumAangemaakt            Datetime(6)                 not null    default NOW(6)
+,DatumGewijzigd             Datetime(6)                 not null    default NOW(6)
+,primary key                (Id)
+,foreign key                (ConatactId) references Contact(Id)
+);
+
+create table Contact (
+ Id                         int             unsigned    not null    auto_increment
+,Straat                     varchar(120)                not null
+,Huisnummer                 varchar(10)                 not null
+,Postcode                   varchar(6)                  not null
+,Stad                       varchar(50)                 not null
 ,isActief                   bit                         not null    default 1
 ,Opmerking                  varchar(250)                null        default null
 ,DatumAangemaakt            Datetime(6)                 not null    default NOW(6)

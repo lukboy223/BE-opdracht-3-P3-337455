@@ -49,7 +49,7 @@
             }
             ?>
             </table>
-            <a href="<?= URLROOT; ?>/Leveranciers/index">Terug</a>
+            <a href="<?= URLROOT; ?>/Leveranciers/edit">Terug</a>
         </div>
         <div class="col-2"></div>
     </div>

@@ -17,10 +17,10 @@
         </div>
         <div class="col-2"></div>
     </div>
-    <form action="<?= URLROOT; ?>/Leveranciers/Update" method="post">
+    <form action="<?= URLROOT; ?>/Leveranciers/UpdateLeverancier/<?= $data['LeverancierId']; ?>" method="post">
                 <div class="mb-3">
-                    <label for="Naam" class="form-label">Naam:</label>
-                    <input name="Naam" type="text" class="form-control" id="Naam" placeholder="Naam..." value="<?= $data['LeverancierNaam'] ?>">
+                    <label for="LeverancierNaam" class="form-label">Naam:</label>
+                    <input name="LeverancierNaam" type="text" class="form-control" id="LeverancierNaam" placeholder="Naam..." value="<?= $data['LeverancierNaam'] ?>">
                     <div class="errorFrom"><?= $data['NaamError'] ?></div>
                 </div>
                 <div class="mb-3">
@@ -69,7 +69,7 @@
         <div class="col-2"></div>
         <div class="col-8">
            
-            <a href="<?= URLROOT; ?>/leveranciers/index">Terug</a>
+            <a href="<?= URLROOT; ?>/leveranciers/edit">Terug</a>
         </div>
         <div class="col-2"></div>
     </div>

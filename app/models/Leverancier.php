@@ -114,7 +114,7 @@ class Leverancier
     public function UpdateLeverancier($data){
         try {
 
-            $sql = "CALL spUpdateLeverancier(:LeverancierId, :LeverancierNaam, :ContactPersoon, :LeverancierNummer, :Mobiel, :Straat, :Huisnummer, :Postcode, :Stad)";
+            $sql = "CALL __spUpdateLeverancier(:LeverancierId, :LeverancierNaam, :ContactPersoon, :LeverancierNummer, :Mobiel, :ContactId, :Straat, :Huisnummer, :Postcode, :Stad)";
 
             $this->db->query($sql);
 
@@ -122,6 +122,7 @@ class Leverancier
             $this->db->bind(':LeverancierNaam', $data['LeverancierNaam'], PDO::PARAM_STR);
             $this->db->bind(':ContactPersoon', $data['ContactPersoon'], PDO::PARAM_STR);
             $this->db->bind(':LeverancierNummer', $data['LeverancierNummer'], PDO::PARAM_STR);
+            $this->db->bind(':ContactId', $data['ContactId'], PDO::PARAM_INT);
             $this->db->bind(':Mobiel', $data['Mobiel'], PDO::PARAM_STR);
             $this->db->bind(':Straat', $data['Straat'], PDO::PARAM_STR);
             $this->db->bind(':Huisnummer', $data['Huisnummer'], PDO::PARAM_STR);
@@ -131,7 +132,7 @@ class Leverancier
             return $this->db->execute();
             
         } catch (Exception $e) {
-            
+            return false;
             logger(__LINE__, __METHOD__, __FILE__, $e->getMessage());
         }
     }

@@ -148,13 +148,18 @@ class Leveranciers extends BaseController
         return $data;
     }
 
-    public function edit($page = 1, $error = null)
+    public function edit($page = 1, $message = null, $error = false)
     {
         $itemsPerPage = 4; // Number of items per page
         $offset = ($page - 1) * $itemsPerPage;
 
-        if (!is_null($error)) {
-            $color = 'alert-danger';
+        if (!is_null($message)) {
+            if($error == true){
+
+                $color = 'alert-danger';
+            }else{
+                $color = 'alert-success';
+            }
             $visibility = 'flex';
         } else {
             $color = '';
@@ -163,7 +168,7 @@ class Leveranciers extends BaseController
 
         $data = [
             'Magazijn'              => null,
-            'message'               => $error,
+            'message'               => $message,
             'messageColor'          => $color,
             'messageVisibility'     => $visibility,
             'currentPage'           => $page,
@@ -179,8 +184,7 @@ class Leveranciers extends BaseController
     public function updateLeverancier(int $leverancierId)
     {
         $leverancier = $this->leverancierModel->ReadLeverancierById($leverancierId);
-        echo $leverancierId;
-        var_dump($leverancier);
+
 
         if (empty($leverancier)) {
             $this->edit(1, 'Leverancier niet gevonden');
@@ -197,9 +201,9 @@ class Leveranciers extends BaseController
                 'Huisnummer'            => '',
                 'Postcode'              => '',
                 'Stad'                  => '',
-                'NaamError'  => '',
+                'NaamError'             => '',
                 'ContactPersoonError'   => '',
-                'LeverancierNummerError' => '',
+                'LeverancierNummerError'=> '',
                 'MobielError'           => '',
                 'StraatError'           => '',
                 'HuisnummerError'       => '',
@@ -216,27 +220,29 @@ class Leveranciers extends BaseController
                 $data['Huisnummer'] = $contact->Huisnummer;
                 $data['Postcode'] = $contact->Postcode;
                 $data['Stad'] = $contact->Stad;
+            }else{
+                $this->edit(1, 'Kan leverancier contact informatie niet opvragen, probeer het later opnieuw', true);
             }
-            var_dump($data);
+          
 
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
-                $data['LeverancierNaam'] = trim($_POST['LeverancierNaam']);
-                $data['ContactPersoon'] = trim($_POST['ContactPersoon']);
-                $data['LeverancierNummer'] = trim($_POST['LeverancierNummer']);
-                $data['Mobiel'] = trim($_POST['Mobiel']);
+                $data['LeverancierNaam']    = trim($_POST['LeverancierNaam']);
+                $data['ContactPersoon']     = trim($_POST['ContactPersoon']);
+                $data['LeverancierNummer']  = trim($_POST['LeverancierNummer']);
+                $data['Mobiel']             = trim($_POST['Mobiel']);
 
                 $data = $this->updateLeverancierValidation($data);
 
                 if (
-                    empty($data['LeverancierNaamError']) &&
-                    empty($data['ContactPersoonError']) &&
-                    empty($data['LeverancierNummerError']) &&
-                    empty($data['MobielError']) &&
-                    empty($data['StraatError']) &&
-                    empty($data['HuisnummerError']) &&
-                    empty($data['PostcodeError']) &&
+                    empty($data['LeverancierNaamError'])    &&
+                    empty($data['ContactPersoonError'])     &&
+                    empty($data['LeverancierNummerError'])  &&
+                    empty($data['MobielError'])             &&
+                    empty($data['StraatError'])             &&
+                    empty($data['HuisnummerError'])         &&
+                    empty($data['PostcodeError'])           &&
                     empty($data['StadError'])
                 ) {
                     $ModelData = [
@@ -244,10 +250,19 @@ class Leveranciers extends BaseController
                         'LeverancierNaam'   => $data['LeverancierNaam'],
                         'ContactPersoon'    => $data['ContactPersoon'],
                         'LeverancierNummer' => $data['LeverancierNummer'],
-                        'Mobiel'            => $data['Mobiel']
+                        'Mobiel'            => $data['Mobiel'],
+                        'ContactId'         => $data['ContactId'],
+                        'Straat'            => $data['Straat'],
+                        'Huisnummer'        => $data['Huisnummer'],
+                        'Postcode'          => $data['Postcode'],
+                        'Stad'              => $data['Stad'],
                     ];
-                    $this->leverancierModel->UpdateLeverancier($ModelData);
-                    header('Location:' . URLROOT . '/leveranciers/edit');
+                    $dataUpdate = $this->leverancierModel->UpdateLeverancier($ModelData);
+                    if($dataUpdate == false){
+                        $this->edit(1, 'Leverancier niet succesvol geupdate, probeer het later opnieuw', true);
+                    }else{
+                        $this->edit(1, 'Leverancier succesvol geupdate', false);
+                    }
                 } else {
                     $this->view('leveranciers/update', $data);
                 }

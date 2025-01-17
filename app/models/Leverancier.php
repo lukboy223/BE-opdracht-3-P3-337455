@@ -114,7 +114,7 @@ class Leverancier
     public function UpdateLeverancier($data){
         try {
 
-            $sql = "CALL __spUpdateLeverancier(:LeverancierId, :LeverancierNaam, :ContactPersoon, :LeverancierNummer, :Mobiel, :ContactId, :Straat, :Huisnummer, :Postcode, :Stad)";
+            $sql = "CALL hujihyhujspUpdateLeverancier(:LeverancierId, :LeverancierNaam, :ContactPersoon, :LeverancierNummer, :Mobiel, :ContactId, :Straat, :Huisnummer, :Postcode, :Stad)";
 
             $this->db->query($sql);
 
